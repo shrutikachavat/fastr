@@ -4,6 +4,8 @@ from PIL import Image, ImageTk
 import os
 import serial.tools.list_ports
 import platform
+import csv
+import datetime
 
 
 class DB:
@@ -231,6 +233,8 @@ class FastrkartGUI:
             self.display_products()
 
     def pay_now(self):
+        # Export the kart products to a CSV file
+        self.export_to_csv()
         # Empty the kart when Pay Now button is clicked
         self.kart = {
             "products": {},
@@ -249,6 +253,36 @@ class FastrkartGUI:
         # Continue reading RFID tags
         self.root.after(100, self.read_rfid)
 
+    def export_to_csv(self):
+        # Generate a timestamp for the file name
+        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+
+        # Define the directory path
+        directory = "../exports"
+
+        # Create the directory if it doesn't exist
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        # Define the CSV file path with the timestamp in the name
+        file_path = f"../exports/kart_products_{timestamp}.csv"
+
+        # Check if the file exists
+        file_exists = os.path.isfile(file_path)
+
+        # Open the CSV file in append mode if it exists, otherwise open in write mode
+        with open(file_path, mode='a' if file_exists else 'w', newline='') as file:
+            writer = csv.writer(file)
+
+            # Write the header row if the file is newly created
+            if not file_exists:
+                writer.writerow(["Product ID", "Title", "Rate", "Quantity"])
+
+            # Write the product details for each product in the kart
+            for product in self.kart["products"].values():
+                writer.writerow([product["id"], product["title"], product["rate"], product["quantity"]])
+
+        print(f"CSV file '{file_path}' has been created or updated successfully.")
 
 # Create the main window
 root = tk.Tk()
