@@ -3,6 +3,7 @@ import tkmacosx as tkmac
 from PIL import Image, ImageTk
 import os
 import serial.tools.list_ports
+import platform
 
 
 class DB:
@@ -99,9 +100,11 @@ class FastrkartGUI:
 
     def get_serial_port(self):
         # Get the serial port for Arduino communication
+        if 'mac' in platform.platform():
+            PORT_SEARCH_STRING = 'usbmodem'
         ports = serial.tools.list_ports.comports()
         for port in ports:
-            if "usbmodem" in port.device:  # Adjust the device name as per your Arduino setup
+            if PORT_SEARCH_STRING in port.device:  # Adjust the device name as per your Arduino setup
                 return port.device
         return None
 
