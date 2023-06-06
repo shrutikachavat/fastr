@@ -74,7 +74,7 @@ class FastrkartGUI:
         self.header_frame = tk.Frame(self.root, bg="black")
         self.header_frame.pack(side=tk.TOP, fill=tk.X)
 
-        self.header_label = tk.Label(self.header_frame, text="fastr", font=("Arial", 36), fg="white", bg="black")
+        self.header_label = tk.Label(self.header_frame, text="Welcome!", font=("Arial", 36), fg="white", bg="black")
         self.header_label.pack(pady=20)
 
         self.product_frame = tk.Frame(self.root)
@@ -83,13 +83,13 @@ class FastrkartGUI:
         self.footer_frame = tk.Frame(self.root, bg="black", pady=20)
         self.footer_frame.pack(side=tk.BOTTOM, fill=tk.X)
 
-        self.sub_total_label = tk.Label(self.footer_frame, text="Sub Total: $0", fg="white", bg="black", font=("Arial", 18))
+        self.sub_total_label = tk.Label(self.footer_frame, text="Sub Total: ₹0", fg="white", bg="black", font=("Arial", 18))
         self.sub_total_label.pack(side=tk.LEFT, padx=10)
 
-        self.tax_label = tk.Label(self.footer_frame, text="Tax: $0", fg="white", bg="black", font=("Arial", 18))
+        self.tax_label = tk.Label(self.footer_frame, text="Tax: ₹0", fg="white", bg="black", font=("Arial", 18))
         self.tax_label.pack(side=tk.LEFT, padx=10)
 
-        self.total_label = tk.Label(self.footer_frame, text="Total: $0", fg="white", bg="black", font=("Arial", 18))
+        self.total_label = tk.Label(self.footer_frame, text="Total: ₹0", fg="white", bg="black", font=("Arial", 18))
         self.total_label.pack(side=tk.LEFT, padx=10)
 
         self.pay_now_button = tkmac.Button(self.footer_frame, text="Pay Now", bg="#4CBB17", highlightbackground='#4CBB17', borderless=1, command=self.pay_now, fg="white", font=("Arial", 18))
@@ -140,9 +140,9 @@ class FastrkartGUI:
 
     def update_total_label(self):
         # Update the total label with the current total value
-        self.sub_total_label["text"] = f"Sub Total: ${self.kart['sub_total']:.2f}"
-        self.tax_label["text"] = f"Tax: ${self.kart['tax']:.2f}"
-        self.total_label["text"] = f"Total: ${self.kart['total']:.2f}"
+        self.sub_total_label["text"] = f"Sub Total: ₹{self.kart['sub_total']:.2f}"
+        self.tax_label["text"] = f"Tax: ₹{self.kart['tax']:.2f}"
+        self.total_label["text"] = f"Total: ₹{self.kart['total']:.2f}"
 
     def display_products(self):
         # Display the products in the kart with their quantities
@@ -165,7 +165,7 @@ class FastrkartGUI:
             title_label = tk.Label(product_frame, text=f"Title: {product['title']}", font=("Arial", 18))
             title_label.pack(side=tk.LEFT)
 
-            rate_label = tk.Label(product_frame, text=f"Rate: ${product['rate']}", font=("Arial", 18))
+            rate_label = tk.Label(product_frame, text=f"Rate: ₹{product['rate']}", font=("Arial", 18))
             rate_label.pack(side=tk.LEFT)
 
             tag_id_label = tk.Label(product_frame, text=f"Tag ID: {product['tag_id']}", font=("Arial", 18))
