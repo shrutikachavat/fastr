@@ -1,5 +1,5 @@
 import tkinter as tk
-import tkmacosx as tkmac
+# import tkmacosx as tkmac
 from PIL import Image, ImageTk
 import os
 import serial.tools.list_ports
@@ -93,7 +93,7 @@ class FastrkartGUI:
         self.total_label = tk.Label(self.footer_frame, text="Total: ₹0", fg="white", bg="black", font=("Arial", 18))
         self.total_label.pack(side=tk.LEFT, padx=10)
 
-        self.pay_now_button = tkmac.Button(self.footer_frame, text="Pay Now", bg="#4CBB17", highlightbackground='#4CBB17', borderless=1, command=self.pay_now, fg="white", font=("Arial", 18))
+        self.pay_now_button = tk.Button(self.footer_frame, text="Pay Now", bg="#4CBB17", highlightbackground='#4CBB17', command=self.pay_now, fg="white", font=("Arial", 18))
         self.pay_now_button.pack(side=tk.RIGHT, padx=10)
 
         self.display_products()
