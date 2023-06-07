@@ -259,7 +259,7 @@ class FastrkartGUI:
 # Create the main window
 root = tk.Tk()
 root.title("fastr")
-# root.attributes('-fullscreen', True)
+root.attributes('-fullscreen', True)
 
 # Create an instance of FastrkartGUI
 fastrkart_gui = FastrkartGUI(root)
