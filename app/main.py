@@ -13,15 +13,17 @@ class DB:
         "1": {
             "id": 1,
             "tag_id": "99231131167",
-            "title": "T-Shirt",
+            "title": "Puma T-shirt",
             "rate": 500,
+            "size":"L",
             "image": "1.png"
         },
         "2": {
             "id": 2,
             "tag_id": "9958177152",
-            "title": "Coffee Mug",
+            "title": "Nike Sketchers",
             "rate": 350,
+            "size":"38",
             "image": "2.png"
         },
         "3": {
@@ -29,6 +31,7 @@ class DB:
             "tag_id": "194744170",
             "title": "Sweatshirt",
             "rate": 900,
+            "size":"S",
             "image": "3.png"
         },
         "4": {
@@ -36,6 +39,7 @@ class DB:
             "tag_id": "17072247175",
             "title": "Cap",
             "rate": 250,
+            "size":"M",
             "image": "4.png"
         },
         "5": {
@@ -43,6 +47,7 @@ class DB:
             "tag_id": "2202238151",
             "title": "Sipper",
             "rate": 700,
+            "size":"S",
             "image": "5.png"
         }
     }
@@ -175,6 +180,9 @@ class FastrkartGUI:
 
             tag_id_label = tk.Label(product_frame, text=f"Tag ID: {product['tag_id']}", font=("Arial", 18))
             tag_id_label.pack(side=tk.LEFT)
+
+            size_label = tk.Label(product_frame, text=f"Size: {product['size']}", font=("Arial", 18))
+            size_label.pack(side=tk.LEFT)
 
             quantity_label = tk.Label(product_frame, text="Quantity: ", font=("Arial", 18))
             quantity_label.pack(side=tk.LEFT)
