@@ -6,62 +6,25 @@ import serial.tools.list_ports
 import platform
 import csv
 import datetime
+import requests
 
 
-class DB:
-    products = {
-        "1": {
-            "id": 1,
-            "tag_id": "99231131167",
-            "title": "Puma T-shirt",
-            "rate": 500,
-            "size":"L",
-            "image": "1.png"
-        },
-        "2": {
-            "id": 2,
-            "tag_id": "9958177152",
-            "title": "Nike Sketchers",
-            "rate": 350,
-            "size":"38",
-            "image": "2.png"
-        },
-        "3": {
-            "id": 3,
-            "tag_id": "194744170",
-            "title": "Sweatshirt",
-            "rate": 900,
-            "size":"S",
-            "image": "3.png"
-        },
-        "4": {
-            "id": 4,
-            "tag_id": "17072247175",
-            "title": "Cap",
-            "rate": 250,
-            "size":"M",
-            "image": "4.png"
-        },
-        "5": {
-            "id": 5,
-            "tag_id": "2202238151",
-            "title": "Sipper",
-            "rate": 700,
-            "size":"S",
-            "image": "5.png"
-        }
-    }
+class FastrkartAPI:
+    @staticmethod
+    def get_product_by_tag_id(tag_id):
+        # Make an API request to get the product details based on the tag_id
+        url = f"http://localhost:8000/product/products?tag_id={tag_id}"
+        response = requests.get(url)
 
-    @classmethod
-    def get_product_by_tag_id(cls, tag_id):
-        for product in cls.products.values():
-            if product["tag_id"] == tag_id:
-                return product
+        if response.status_code == 200:
+            product = response.json()
+            return product
+
         return None
-
 
 class FastrkartGUI:
     def __init__(self, root):
+        self.api = FastrkartAPI()
         self.root = root
         self.kart = {
             "products": {},
@@ -120,10 +83,11 @@ class FastrkartGUI:
             # Retrieve the tag_id from the Arduino
             tag_id = self.arduino.readline().decode().strip()
 
-            # Get the product details from the DB based on the tag_id
-            product = DB.get_product_by_tag_id(tag_id)
+            # Get the product details from the API based on the tag_id
+            product = self.api.get_product_by_tag_id(tag_id)
 
             if product:
+                print(product)
                 self.update_kart(product)
                 self.update_total_label()
                 self.display_products()
@@ -295,7 +259,7 @@ class FastrkartGUI:
 # Create the main window
 root = tk.Tk()
 root.title("fastr")
-root.attributes('-fullscreen', True)
+# root.attributes('-fullscreen', True)
 
 # Create an instance of FastrkartGUI
 fastrkart_gui = FastrkartGUI(root)
