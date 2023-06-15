@@ -1,5 +1,6 @@
 import tkinter as tk
-# import tkmacosx as tkmac
+from tkinter import ttk
+import tkmacosx as tkmac
 from PIL import Image, ImageTk
 import os
 import serial.tools.list_ports
@@ -63,8 +64,11 @@ class FastrkartGUI:
         self.total_label = tk.Label(self.footer_frame, text="Total: ₹0", fg="white", bg="black", font=("Arial", 18))
         self.total_label.pack(side=tk.LEFT, padx=10)
 
-        self.pay_now_button = tk.Button(self.footer_frame, text="Pay Now", bg="#4CBB17", highlightbackground='#4CBB17', command=self.pay_now, fg="white", font=("Arial", 18))
-        self.pay_now_button.pack(side=tk.RIGHT, padx=10)
+        self.pay_now_button = tkmac.Button(self.footer_frame, text="Pay Now", 
+                                           bg="#4CBB17", highlightbackground='#4CBB17',
+                                           padx=10, pady=10,
+                                           command=self.pay_now, fg="white", font=("Arial", 18))
+        self.pay_now_button.pack(side=tk.RIGHT, padx=(10,100))
 
         self.display_products()
 
@@ -119,57 +123,65 @@ class FastrkartGUI:
         self.total_label["text"] = f"Total: ₹{self.kart['total']:.2f}"
 
     def display_products(self):
-        # Display the products in the kart with their quantities
+        # Clear the product frame before updating the display
         for widget in self.product_frame.winfo_children():
             widget.destroy()
 
         for product in self.kart["products"].values():
-            product_frame = tk.Frame(self.product_frame)
-            product_frame.pack()
+            product_frame = tk.Frame(self.product_frame, pady=10)
+            product_frame.pack(fill=tk.X, padx=10)
+
+            # Create a frame to hold the product image
+            image_frame = tk.Frame(product_frame)
+            image_frame.pack(side=tk.LEFT)
 
             image_path = os.path.join("images", product["image"])
             if os.path.exists(image_path):
                 image = Image.open(image_path)
                 image = image.resize((80, 80), Image.ANTIALIAS)
                 photo = ImageTk.PhotoImage(image)
-                image_label = tk.Label(product_frame, image=photo)
+                image_label = tk.Label(image_frame, image=photo)
                 image_label.image = photo
-                image_label.pack(side=tk.LEFT)
+                image_label.pack()
 
-            title_label = tk.Label(product_frame, text=f"Title: {product['title']}", font=("Arial", 18))
-            title_label.pack(side=tk.LEFT)
+            # Create a frame to hold the product details
+            details_frame = tk.Frame(product_frame)
+            details_frame.pack(side=tk.LEFT, padx=(100, 300))
 
-            rate_label = tk.Label(product_frame, text=f"Rate: ₹{product['rate']}", font=("Arial", 18))
-            rate_label.pack(side=tk.LEFT)
+            title_label = tk.Label(details_frame, text=f"Title: {product['title']}", font=("Arial", 18))
+            title_label.pack(anchor=tk.W)
 
-            tag_id_label = tk.Label(product_frame, text=f"Tag ID: {product['tag_id']}", font=("Arial", 18))
-            tag_id_label.pack(side=tk.LEFT)
+            rate_label = tk.Label(details_frame, text=f"Rate: ₹{product['rate']}", font=("Arial", 18))
+            rate_label.pack(anchor=tk.W)
 
-            size_label = tk.Label(product_frame, text=f"Size: {product['size']}", font=("Arial", 18))
-            size_label.pack(side=tk.LEFT)
+            size_label = tk.Label(details_frame, text=f"Size: {product['size']}", font=("Arial", 18))
+            size_label.pack(anchor=tk.W)
 
-            quantity_label = tk.Label(product_frame, text="Quantity: ", font=("Arial", 18))
-            quantity_label.pack(side=tk.LEFT)
+            gender_label = tk.Label(details_frame, text=f"Gender: {product['gender']}", font=("Arial", 18))
+            gender_label.pack(anchor=tk.W)
 
-            quantity_frame = tk.Frame(product_frame)
+            # Create a frame to hold the quantity buttons and remove button
+            buttons_frame = tk.Frame(product_frame)
+            buttons_frame.pack(side=tk.RIGHT)
+
+            quantity_frame = tk.Frame(buttons_frame)
             quantity_frame.pack(side=tk.LEFT)
 
-            quantity_decrease_button = tk.Button(quantity_frame, text="-",
-                                                command=lambda id=product["id"]: self.decrease_quantity(id),
-                                                font=("Arial", 18))
+            # Create buttons to decrease/increase the product quantity
+            quantity_decrease_button = tk.Button(quantity_frame, text="-", command=lambda id=product["id"]: self.decrease_quantity(id),
+                                                font=("Arial", 32), width=2, height=1)
             quantity_decrease_button.pack(side=tk.LEFT)
 
-            quantity_value = tk.Label(quantity_frame, text=str(product["quantity"]), font=("Arial", 18))
-            quantity_value.pack(side=tk.LEFT)
+            quantity_value = tk.Label(quantity_frame, text=str(product["quantity"]), font=("Arial", 26))
+            quantity_value.pack(side=tk.LEFT, padx=(5, 5))
 
-            quantity_increase_button = tk.Button(quantity_frame, text="+",
-                                                command=lambda id=product["id"]: self.increase_quantity(id),
-                                                font=("Arial", 18))
+            quantity_increase_button = tk.Button(quantity_frame, text="+", command=lambda id=product["id"]: self.increase_quantity(id),
+                                                font=("Arial", 32), width=2, height=1)
             quantity_increase_button.pack(side=tk.LEFT)
 
-            remove_button = tk.Button(product_frame, text="❌", command=lambda id=product["id"]: self.remove_product(id),
-                                      fg="red", font=("Arial", 18))
-            remove_button.pack(side=tk.LEFT)
+            remove_button = tk.Button(buttons_frame, text="❌", command=lambda id=product["id"]: self.remove_product(id),
+                                    fg="red", font=("Arial", 26), width=2, height=1)
+            remove_button.pack(side=tk.RIGHT, padx=(100, 0))
 
     def increase_quantity(self, product_id):
         # Increase the quantity of a product in the kart
@@ -207,6 +219,10 @@ class FastrkartGUI:
     def pay_now(self):
         # Export the kart products to a CSV file
         self.export_to_csv()
+
+        # Show payment success message
+        self.show_payment_success_message()
+
         # Empty the kart when Pay Now button is clicked
         self.kart = {
             "products": {},
@@ -216,6 +232,36 @@ class FastrkartGUI:
         }
         self.update_total_label()
         self.display_products()
+
+    def show_payment_success_message(self):
+        # Create a custom dialog box
+        dialog = tk.Toplevel()
+        dialog.title("Payment Successful")
+        dialog.geometry('1000x800')
+        
+        # Create a label to display the image
+        image_path = "./images/success.png"  # Replace with the actual path to your image
+        image = Image.open(image_path)
+        image = image.resize((400, 400), Image.ANTIALIAS)  # Adjust the size of the image as needed
+        photo = ImageTk.PhotoImage(image)
+        image_label = tk.Label(dialog, image=photo)
+        image_label.image = photo
+        image_label.pack()
+
+        # Add a label for the payment success message
+        message_label = tk.Label(dialog, text="Thank you for shopping with us! Payment successful.", font=("Arial", 24))
+        message_label.pack(pady=20)
+
+        # Add a regular button to close the dialog
+        ok_button = tkmac.Button(dialog, text="Okay!",
+                                 bg="#4CBB17", highlightbackground='#4CBB17',
+                                 padx=10, pady=10, fg="white",
+                                 command=dialog.destroy, font=("Arial", 32))
+        ok_button.pack(pady=100)
+
+        # Make the dialog modal (prevent interaction with the main window)
+        dialog.grab_set()
+        dialog.wait_window()
 
     def read_rfid(self):
         # Read the RFID tag ID from the Arduino and add the corresponding product to the kart
@@ -248,11 +294,11 @@ class FastrkartGUI:
 
             # Write the header row if the file is newly created
             if not file_exists:
-                writer.writerow(["Product ID", "Title", "Rate", "Quantity"])
+                writer.writerow(["Product ID", "Brand", "Title", "Quantity", "Size","Gender", "Type", "Category", "Material", "Colour", "Rate"])
 
             # Write the product details for each product in the kart
             for product in self.kart["products"].values():
-                writer.writerow([product["id"], product["title"], product["rate"], product["quantity"]])
+                writer.writerow([product["id"], product["brand"], product["title"], product["quantity"], product["size"], product["gender"], product["type"], product["category"], product["material"], product["colour"], product["rate"]])
 
         print(f"CSV file '{file_path}' has been created or updated successfully.")
 
